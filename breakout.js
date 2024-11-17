@@ -254,7 +254,7 @@ function drawScore() { // funkcija koja crta score i maxScore na canvasu
     ctx.fillStyle = "green"; // postavi boju za punjenje na zelenu
     ctx.font = "20px sans-serif"; // postavljanje stila i veličine fonta za tekst
     ctx.fillText(`score: ${gameStatus.score}`, canvasWidth - 220, 25); // crtam tekst score na canvasu na određenoj širini i visini
-    ctx.fillText(`max score: ${localStorage.getItem('maxScore')}`, canvasWidth - 135, 25); // isto crtam maxScore na canvasu na 
+    ctx.fillText(`max score: ${localStorage.getItem('maxScore') || 0}`, canvasWidth - 135, 25); // isto crtam maxScore na canvasu na 
     //definiranoj širini i visini
     if (gameStatus.score > gameStatus.maxScore && !gameStatus.newHighScoreFlag) { // provjera je li novi score u igrici prešao trenutni
         // maxScore te je li varijabla newHighScoreFlag postavljena na false, tada je postavljen novi highscore i nastavi dalje
