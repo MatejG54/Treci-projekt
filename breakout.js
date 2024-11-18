@@ -2,31 +2,44 @@ let canvas, ctx; // definiranje canvas i context varijabli
 let canvasWidth; // definiranje canvas širine varijable
 let canvasHeight; // definiranje canvas visine varijable
 
+canvas = document.getElementById("central"); // dohvaćanje canvasa pomoću id-a central
+canvas.width = window.innerWidth; // postavljam canvas širina na veličinu cijelog prozora web preglednika ali smanjenu za 10 jer je potrebno staviti vidljivi rub
+canvas.height = window.innerHeight; // ovdje postavljam canvas visinu na visinu cijelog prozora web preglednika te ga ponovno smanjujem za 10 zbog vidljivog ruba
+canvasWidth = canvas.width; // postavljam vrijednost širine u varijablu canvasWidth
+canvasHeight = canvas.height; // postavljam vrijednost visine u varijablu canvasHeight
+ctx = canvas.getContext("2d"); // kreiranje konteksta za canvas, služi za crtanje po canvasu
+
+// paddle.x = (canvasWidth - paddle.width) / 2; // definiram gdje će na x osi započeti moja palica, 
+// paddle.y = canvasHeight - paddle.height - 5; // definiram gdje će na y osi započeti moja palica
+
+document.addEventListener("keydown", handleKeyDown); // na trenutnom document objektu slušam da li se događa određeni
+// događaj, u ovom slučaju hoće li korisnik kliknuti neku tipku na tipkovnici, te ako klikne tada se poziva handleKeyDown funkcija
+
 let paddle = { // definiranje palice
-    width: 150, // širina
+    width: canvasWidth*0.1,  //150 // širina
     height: 10, // visina
-    x: 0, // x koordinata palice, gdje će palica početi
-    y: 0, // y koordinata palice, gdje će početi
+    x: (canvasWidth - canvasWidth*0.1) / 2, // x koordinata palice, gdje će palica početi
+    y: canvasHeight - 10 - 5, // y koordinata palice, gdje će početi
     speed: 20 // brzina kojom se palica pomiče po x osi
 };
 
 let ball = { // definiranje loptice
     size: 12, // veličina loptice
-    x: 0, // x koordinata loptice, gdje će se nalaziti po x osi
-    y: 0, // y koordinata loptice, gdje će se nalaziti po y osi
+    x: canvasWidth / 2, // x koordinata loptice, gdje će se nalaziti po x osi
+    y: canvasHeight - 25, //paddle.y - 12, // y koordinata loptice, gdje će se nalaziti po y osi
     velocityX: 0, // brzina loptice po x osi
     velocityY: 0 // brzina loptice po y osi
 };
 
 let blocks = []; // definiranje liste blokova
-const blockProps = { // definiranje atributa uz blokove
-    width: 131, // širina bloka
-    height: 20, // visina bloka
-    columns: 10, // broj stupaca blokova
+let blockProps = { // definiranje atributa uz blokove
+    width: canvasWidth*0.1, // širina bloka
+    height: canvasHeight*0.03, // visina bloka
+    columns: 9, // broj stupaca blokova
     rows: 3, // broj redaka blokova
-    padding: 10, // razmak između blokova
-    offsetX: 15, // pomak blokova od lijeve strane canvasa, odnosno pomak na x osi
-    offsetY: 45 // pomak blokova od vrha canvasa, odnosno pomak na y osi
+    padding: canvasWidth*0.01,//10, // razmak između blokova
+    offsetX: canvasWidth*0.01, // pomak blokova od lijeve strane canvasa, odnosno pomak na x osi
+    offsetY: canvasHeight*0.07 // pomak blokova od vrha canvasa, odnosno pomak na y osi
 };
 
 let gameStatus = { // ovdje definiram status svake igre koju netko igra
@@ -44,36 +57,42 @@ const sounds = { // definiram objekt sounds u kojem su mi pohranjeni svi zvukovi
     highScore: new Audio('in-game-level-uptype-2-230567.mp3') // zvuk kada postaviš novi highscore
 };
 
-function init() { // funkcija kojom inicijaliziram početne vrijednosti canvasa i palice, početna funkcija koju pozivam
-    canvas = document.getElementById("central"); // dohvaćanje canvasa pomoću id-a central
-    canvas.width = window.innerWidth - 10; // postavljam canvas širina na veličinu cijelog prozora web preglednika ali smanjenu za 10 jer je potrebno staviti vidljivi rub
-    canvas.height = window.innerHeight - 10; // ovdje postavljam canvas visinu na visinu cijelog prozora web preglednika te ga ponovno smanjujem za 10 zbog vidljivog ruba
-    canvasWidth = canvas.width; // postavljam vrijednost širine u varijablu canvasWidth
-    canvasHeight = canvas.height; // postavljam vrijednost visine u varijablu canvasHeight
-    ctx = canvas.getContext("2d"); // kreiranje konteksta za canvas, služi za crtanje po canvasu
+resetBall(); // pozivam funkciju koja će postaviti početne vrijednosti za lopticu
+generateBlocks(); // pozivam funkciju koja će generirati blokove
+gameStatus.maxScore = localStorage.getItem('maxScore') || 0; // postavljam vrijednost varijable maxScore na vrijednost koja 
+// je postavljena u localStorageu ili ako ne postoji tada je vrijednost 0
 
-    paddle.x = (canvasWidth - paddle.width) / 2; // definiram gdje će na x osi započeti moja palica, 
-    paddle.y = canvasHeight - paddle.height - 5; // definiram gdje će na y osi započeti moja palica
+// resetBall(); // pozivam funkciju koja će postaviti početne vrijednosti za lopticu
+// function init() { // funkcija kojom inicijaliziram početne vrijednosti canvasa i palice, početna funkcija koju pozivam
+// canvas = document.getElementById("central"); // dohvaćanje canvasa pomoću id-a central
+// canvas.width = window.innerWidth - 10; // postavljam canvas širina na veličinu cijelog prozora web preglednika ali smanjenu za 10 jer je potrebno staviti vidljivi rub
+// canvas.height = window.innerHeight - 10; // ovdje postavljam canvas visinu na visinu cijelog prozora web preglednika te ga ponovno smanjujem za 10 zbog vidljivog ruba
+// canvasWidth = canvas.width; // postavljam vrijednost širine u varijablu canvasWidth
+// canvasHeight = canvas.height; // postavljam vrijednost visine u varijablu canvasHeight
+// ctx = canvas.getContext("2d"); // kreiranje konteksta za canvas, služi za crtanje po canvasu
 
-    resetBall(); // pozivam funkciju koja će postaviti početne vrijednosti za lopticu
-    gameStatus.maxScore = localStorage.getItem('maxScore') || 0; // postavljam vrijednost varijable maxScore na vrijednost koja 
-    // je postavljena u localStorageu ili ako ne postoji tada je vrijednost 0
+// paddle.x = (canvasWidth - paddle.width) / 2; // definiram gdje će na x osi započeti moja palica, 
+// paddle.y = canvasHeight - paddle.height - 5; // definiram gdje će na y osi započeti moja palica
 
-    document.addEventListener("keydown", handleKeyDown); // na trenutnom document objektu slušam da li se događa određeni
-    // događaj, u ovom slučaju hoće li korisnik kliknuti neku tipku na tipkovnici, te ako klikne tada se poziva handleKeyDown funkcija
-    generateBlocks(); // pozivam funkciju koja će generirati blokove
-    requestAnimationFrame(gameLoop); // ugrađena JavaScript funkcija koja poziva callback funkciju, u ovom slučaju gameLoop
-}
+// resetBall(); // pozivam funkciju koja će postaviti početne vrijednosti za lopticu
+// gameStatus.maxScore = localStorage.getItem('maxScore') || 0; // postavljam vrijednost varijable maxScore na vrijednost koja 
+// // je postavljena u localStorageu ili ako ne postoji tada je vrijednost 0
+
+// document.addEventListener("keydown", handleKeyDown); // na trenutnom document objektu slušam da li se događa određeni
+// // događaj, u ovom slučaju hoće li korisnik kliknuti neku tipku na tipkovnici, te ako klikne tada se poziva handleKeyDown funkcija
+// generateBlocks(); // pozivam funkciju koja će generirati blokove
+// requestAnimationFrame(gameLoop); // ugrađena JavaScript funkcija koja poziva callback funkciju, u ovom slučaju gameLoop
+// }
 
 function resetBall() {// funkcija koja resetira lopticu na način da je postavi na sredinu palice i stavi random kut kretanja
     let angle = (Math.random() * (150 - 30) + 30) * (Math.PI / 180); // Math.random() vraća slučajan broj između 0 i 1 te to množim 
     //sa brojem 120, a dodavanje broja 30 mi omogućava da minimalni kut bude 30 stupnjeva, a maksimalni kut bude 150, te nakon toga 
     //pomoću Math.PI/180 stupnjeve pretvaram u radijane
-    ball.x = canvasWidth / 2; // postavljanje x koordinate loptice na širinu canvasa podijeljenu sa 2, to jest sredina palice
-    ball.y = paddle.y - ball.size; // y koordinata loptice će biti y koordinata palice umanjena za večinu loptice
-    ball.velocityX = 5 * Math.cos(angle); // brzina loptice po x osi, 5 je konstantna brzina no množenjem s kosinusom kuta
+    // ball.x = canvasWidth / 2; // postavljanje x koordinate loptice na širinu canvasa podijeljenu sa 2, to jest sredina palice
+    // ball.y = paddle.y - ball.size; // y koordinata loptice će biti y koordinata palice umanjena za večinu loptice
+    ball.velocityX = 4 * Math.cos(angle); // brzina loptice po x osi, 5 je konstantna brzina no množenjem s kosinusom kuta
     // dobivamo pozitivnu ili negativnu vrijednost što nam govori hoće li se loptica gibati u pozitivnom ili negativnom smjeru po x osi 
-    ball.velocityY = -Math.abs(5 * Math.sin(angle));// ovdje računamo brzinu loptice po y osi, početna brzina je 5 kao i kod x osi,
+    ball.velocityY = -Math.abs(4 * Math.sin(angle));// ovdje računamo brzinu loptice po y osi, početna brzina je 5 kao i kod x osi,
     // ali sinusom kuta dobivamo vrijednost između -1 i 1 te time određujemo koliko će brzine ići gore ili dolje, to množimo sa 5 te
     // nam to daje vertikalnu komponentu brzine, stavljamo Math.abs() na tu vrijednost kako bi uvijek dobili pozitivne vrijednosti
     // i onda to pretvaram u negativnu vrijednost jer početno želim da loptica ide prema gore
@@ -283,4 +302,6 @@ function endGame(message) { // funkcija koja se poziva kada igrač završi igru 
     }
 }
 
-window.onload = init; // kada se stranica učita u potpunosti tada pozovi funkciju init da se izvrši
+// window.onload = init; // kada se stranica učita u potpunosti tada pozovi funkciju init da se izvrši
+// window.onresize = init;
+window.onload = gameLoop; // kada se stranica učita u potpunosti tada pozovi funkciju gameLoop da se izvrši
