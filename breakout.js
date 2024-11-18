@@ -26,7 +26,7 @@ let paddle = { // definiranje palice
 let ball = { // definiranje loptice
     size: 12, // veličina loptice
     x: canvasWidth / 2, // x koordinata loptice, gdje će se nalaziti po x osi
-    y: canvasHeight - 25, //paddle.y - 12, // y koordinata loptice, gdje će se nalaziti po y osi
+    y: canvasHeight - 25, // y koordinata loptice, gdje će se nalaziti po y osi
     velocityX: 0, // brzina loptice po x osi
     velocityY: 0 // brzina loptice po y osi
 };
@@ -37,7 +37,7 @@ let blockProps = { // definiranje atributa uz blokove
     height: canvasHeight*0.03, // visina bloka
     columns: 9, // broj stupaca blokova
     rows: 3, // broj redaka blokova
-    padding: canvasWidth*0.01,//10, // razmak između blokova
+    padding: canvasWidth*0.01, // razmak između blokova
     offsetX: canvasWidth*0.01, // pomak blokova od lijeve strane canvasa, odnosno pomak na x osi
     offsetY: canvasHeight*0.07 // pomak blokova od vrha canvasa, odnosno pomak na y osi
 };
@@ -252,23 +252,6 @@ function detectCollision(ball, rect) { // funkcija za provjeru kolizija između 
     // jednaka polumjera loptice onda je došlo do sudar, vrati true, u suprotnom false
 }
 
-// function createRadialGradient(rect, color1, color2) {
-//     let gradient = ctx.createRadialGradient(
-//         rect.x + rect.width / 2, rect.y + rect.height / 2, 10,
-//         rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width / 2
-//     );
-//     gradient.addColorStop(0, color1);
-//     gradient.addColorStop(1, color2);
-//     return gradient;
-// }
-
-// function createLinearGradient(rect, color1, color2) {
-//     let gradient = ctx.createLinearGradient(rect.x, rect.y, rect.x, rect.y + rect.height);
-//     gradient.addColorStop(0, color1);
-//     gradient.addColorStop(1, color2);
-//     return gradient;
-// }
-
 function drawScore() { // funkcija koja crta score i maxScore na canvasu
     ctx.fillStyle = "green"; // postavi boju za punjenje na zelenu
     ctx.font = "20px sans-serif"; // postavljanje stila i veličine fonta za tekst
@@ -302,6 +285,4 @@ function endGame(message) { // funkcija koja se poziva kada igrač završi igru 
     }
 }
 
-// window.onload = init; // kada se stranica učita u potpunosti tada pozovi funkciju init da se izvrši
-// window.onresize = init;
 window.onload = gameLoop; // kada se stranica učita u potpunosti tada pozovi funkciju gameLoop da se izvrši
