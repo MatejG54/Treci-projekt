@@ -3,8 +3,8 @@ let canvasWidth; // definiranje canvas širine varijable
 let canvasHeight; // definiranje canvas visine varijable
 
 canvas = document.getElementById("central"); // dohvaćanje canvasa pomoću id-a central
-canvas.width = window.innerWidth; // postavljam canvas širina na veličinu cijelog prozora web preglednika ali smanjenu za 10 jer je potrebno staviti vidljivi rub
-canvas.height = window.innerHeight; // ovdje postavljam canvas visinu na visinu cijelog prozora web preglednika te ga ponovno smanjujem za 10 zbog vidljivog ruba
+canvas.width = window.innerWidth; // postavljam canvas širina na veličinu cijelog prozora web preglednika
+canvas.height = window.innerHeight; // ovdje postavljam canvas visinu na visinu cijelog prozora web preglednika
 canvasWidth = canvas.width; // postavljam vrijednost širine u varijablu canvasWidth
 canvasHeight = canvas.height; // postavljam vrijednost visine u varijablu canvasHeight
 ctx = canvas.getContext("2d"); // kreiranje konteksta za canvas, služi za crtanje po canvasu
@@ -16,7 +16,7 @@ document.addEventListener("keydown", handleKeyDown); // na trenutnom document ob
 // događaj, u ovom slučaju hoće li korisnik kliknuti neku tipku na tipkovnici, te ako klikne tada se poziva handleKeyDown funkcija
 
 let paddle = { // definiranje palice
-    width: canvasWidth*0.1,  //150 // širina
+    width: canvasWidth*0.1, // širina
     height: 10, // visina
     x: (canvasWidth - canvasWidth*0.1) / 2, // x koordinata palice, gdje će palica početi
     y: canvasHeight - 10 - 5, // y koordinata palice, gdje će početi
@@ -90,10 +90,10 @@ function resetBall() {// funkcija koja resetira lopticu na način da je postavi 
     //pomoću Math.PI/180 stupnjeve pretvaram u radijane
     // ball.x = canvasWidth / 2; // postavljanje x koordinate loptice na širinu canvasa podijeljenu sa 2, to jest sredina palice
     // ball.y = paddle.y - ball.size; // y koordinata loptice će biti y koordinata palice umanjena za večinu loptice
-    ball.velocityX = 4 * Math.cos(angle); // brzina loptice po x osi, 5 je konstantna brzina no množenjem s kosinusom kuta
+    ball.velocityX = 4 * Math.cos(angle); // brzina loptice po x osi, 4 je konstantna brzina no množenjem s kosinusom kuta
     // dobivamo pozitivnu ili negativnu vrijednost što nam govori hoće li se loptica gibati u pozitivnom ili negativnom smjeru po x osi 
-    ball.velocityY = -Math.abs(4 * Math.sin(angle));// ovdje računamo brzinu loptice po y osi, početna brzina je 5 kao i kod x osi,
-    // ali sinusom kuta dobivamo vrijednost između -1 i 1 te time određujemo koliko će brzine ići gore ili dolje, to množimo sa 5 te
+    ball.velocityY = -Math.abs(4 * Math.sin(angle));// ovdje računamo brzinu loptice po y osi, početna brzina je 4 kao i kod x osi,
+    // ali sinusom kuta dobivamo vrijednost između -1 i 1 te time određujemo koliko će brzine ići gore ili dolje, to množimo sa 4 te
     // nam to daje vertikalnu komponentu brzine, stavljamo Math.abs() na tu vrijednost kako bi uvijek dobili pozitivne vrijednosti
     // i onda to pretvaram u negativnu vrijednost jer početno želim da loptica ide prema gore
 }
